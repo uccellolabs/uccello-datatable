@@ -1,0 +1,31 @@
+{
+  "name": "uccello-datatable",
+  "version": "0.0.1",
+  "description": "A package to easily use dynamic table in Uccello.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \\\"Error: no test specified\\\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/uccellolabs/uccello-datatable.git"
+  },
+  "keywords": [
+    "Uccello",
+    "Laravel",
+    "Datatable"
+  ],
+  "author": {
+    "name": "Jonathan SARDO",
+    "email": "jonathan@uccellolabs.com",
+    "url": "https://github.com/sardoj"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/uccellolabs/uccello-datatable/issues"
+  },
+  "homepage": "https://github.com/uccellolabs/uccello-datatable#readme",
+  "dependencies": {
+    "sweetalert": "^2.1.2"
+  }
+}
