@@ -56,7 +56,7 @@ export class Datatable {
         $(`.pagination[data-table="${this.table.attr('id')}"]`).hide()
 
         // Show loader
-        $(`.loader[data-table="${this.table.attr('id')}"]`).removeClass('hide')
+        $(`.loader[data-table="${this.table.attr('id')}"]`).show()
 
         // Query data
         let data = {
@@ -78,7 +78,7 @@ export class Datatable {
             this.displayPagination(response)
 
             // Hide loader
-            $(`.loader[data-table="${this.table.attr('id')}"]`).addClass('hide')
+            $(`.loader[data-table="${this.table.attr('id')}"]`).hide()
         })
         .catch((error) => {
             // Hide loader
@@ -113,18 +113,60 @@ export class Datatable {
             return
         }
 
+        let currentPage = response.current_page || 1
+        let pageRange = 2
+        let totalPage = response.last_page
+
+        let rangeStart = currentPage - pageRange
+        let rangeEnd = currentPage + pageRange
+
+        if (rangeEnd > totalPage) {
+          rangeEnd = totalPage
+          rangeStart = totalPage - pageRange * 2
+          rangeStart = rangeStart < 1 ? 1 : rangeStart
+        }
+
+        if (rangeStart <= 1) {
+          rangeStart = 1
+          rangeEnd = Math.min(pageRange * 2 + 1, totalPage)
+        }
+
+        // Add a link to the previous page
         let previousLinkClass = response.prev_page_url === null ? 'disabled' : 'waves-effect'
         let previousDataPage = response.prev_page_url ? `data-page="${response.current_page - 1}"` : ''
         let paginationHtml = `<li class="${previousLinkClass}"><a href="javascript:void(0);" ${previousDataPage}><i class="material-icons">chevron_left</i></a></li>`
 
-        for (let i=1; i<=response.last_page; i++) {
-            if (i === response.current_page) {
+        let i
+
+        if (rangeStart <= pageRange + 1) {
+            // Add 1 to 5
+            for (i = 1; i < rangeStart; i++) {
+                if (i == currentPage) {
+                    paginationHtml += `<li class="active primary"><a href="javascript:void(0);">${i}</a></li>`
+                } else {
+                    paginationHtml += `<li class="waves-effect"><a href="javascript:void(0);" data-page="${i}">${i}</a></li>`
+                }
+            }
+        } else {
+            // Add 1 ... at the beginning
+            paginationHtml += `<li class="waves-effect"><a href="javascript:void(0);" data-page="1">1</a></li> <li>...</li>`
+        }
+
+        // Add 2 pages before and after the current page
+        for (i=rangeStart; i<=rangeEnd; i++) {
+            if (i === currentPage) {
                 paginationHtml += `<li class="active primary"><a href="javascript:void(0);">${i}</a></li>`
             } else {
                 paginationHtml += `<li class="waves-effect"><a href="javascript:void(0);" data-page="${i}">${i}</a></li>`
             }
         }
 
+        // Add ... lastPage
+        if (rangeEnd < totalPage) {
+            paginationHtml += `<li>...</li> <li class="waves-effect"><a href="javascript:void(0);" data-page="${totalPage}">${totalPage}</a></li>`
+        }
+
+        // Add a link to the next page
         let nextLinkClass = response.next_page_url === null ? 'disabled' : 'waves-effect'
         let nextDataPage = response.next_page_url ? `data-page="${response.current_page + 1}"` : ''
         paginationHtml += `<li class="${nextLinkClass}"><a href="javascript:void(0);" ${nextDataPage}><i class="material-icons">chevron_right</i></a></li>`
@@ -166,10 +208,10 @@ export class Datatable {
             }
         })
 
-        // Replace RECORD_ID by the record's id, and RELATION_ID by relation's id, in all links
+        // Replace RECORD_ID by the record's primary key, and RELATION_ID by relation's id, in all links
         $('a', tr).each(function() {
             let href = $(this).attr('href')
-            href = href.replace('RECORD_ID', record.id)
+            href = href.replace('RECORD_ID', record.__primaryKey)
             href = href.replace('RELATION_ID', record.relation_id)
             $(this).attr('href', href)
 
@@ -178,12 +220,12 @@ export class Datatable {
             }
         })
 
-        // Replace RECORD_ID by the record's id in the row url
+        // Replace RECORD_ID by the record's primary key in the row url
         let rowUrl = $(tr).attr('data-row-url')
-        rowUrl = rowUrl.replace('RECORD_ID', record.id)
+        rowUrl = rowUrl.replace('RECORD_ID', record.__primaryKey)
         $(tr).attr('data-row-url', rowUrl)
 
-        $(tr).attr('data-record-id', record.id)
+        $(tr).attr('data-record-id', record.__primaryKey)
         $(tr).attr('data-record-label', record.recordLabel)
 
         // Add click listener
