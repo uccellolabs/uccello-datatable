@@ -343,7 +343,7 @@ export class Datatable {
     launchSearch(fieldName, q)
     {
         if (q !== '') {
-            $('.clear-search').show()
+            $('.clear-search', this.table).show()
         }
 
         if (this.columns[fieldName].search !== q) {
@@ -364,7 +364,7 @@ export class Datatable {
             return
         }
 
-        $('.actions-column .clear-search').on('click', (event) => {
+        $('.actions-column .clear-search', this.table).on('click', (event) => {
             // Clear all search fields
             $('thead select', this.table).val('')
             $('thead input', this.table).val('')
