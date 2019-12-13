@@ -1,6 +1,6 @@
 {
   "name": "uccello-datatable",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A package to easily use dynamic table in Uccello.",
   "main": "index.js",
   "scripts": {
