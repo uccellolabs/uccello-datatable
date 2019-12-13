@@ -1,4 +1,5 @@
 import 'sweetalert'
+import 'materialize-css'
 
 export class Datatable {
     /**
